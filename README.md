@@ -1,8 +1,8 @@
 # nprlite
-You can check it out here: https://nprlite.appspot.com/
+You can check it out here: https://nprlite.org
 
-# Deployed on app engine
-Deploy instructions:
+# Deploy
+NPR Lite is deployed on Google App Engine.
 ```
 $ gcloud app deploy
 ```

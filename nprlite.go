@@ -79,6 +79,7 @@ NPR News
 )
 
 var (
+	NOPAGE          = errors.New("NOPAGE")
 	content         string
 	currentPolitics string
 	categories      string
@@ -102,6 +103,10 @@ type Page struct {
 	Url      string
 }
 
+type Error string
+
+func (e Error) Error() string { return string(e) }
+
 func fetcher(w http.ResponseWriter, r *http.Request, num, category string) {
 	currentPage, err := getnews(w, r, num, category)
 	if err != nil {
@@ -122,6 +127,10 @@ func story(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		err := errors.New("Couldn't fetch story")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if article == "" {
+		return
 	}
 	fmt.Fprintf(w, articleTemplate, styleTemplate, article)
 }
@@ -150,7 +159,16 @@ func parsearticle(body io.Reader) (string, error) {
 		return "", nil
 	}
 	article := articlePieces[0]
+
 	return article, nil
+}
+
+func gotoReferrerOrHome(w http.ResponseWriter, r *http.Request) {
+	if r.Referer() != "" {
+		http.Redirect(w, r, r.Referer(), 301)
+	} else {
+		http.Redirect(w, r, "/", 301)
+	}
 }
 
 func getarticle(w http.ResponseWriter, r *http.Request, id string) (string, error) {
@@ -159,7 +177,17 @@ func getarticle(w http.ResponseWriter, r *http.Request, id string) (string, erro
 	if err != nil {
 		return "", err
 	}
+	if resp.StatusCode == 404 {
+		gotoReferrerOrHome(w, r)
+		return "", nil
+	}
 	body, err := parsearticle(resp.Body)
+	// Some of NPR's pages just don't exist with this api. How
+	// about we just provide an error message and blame npr.
+	if body == "" {
+		gotoReferrerOrHome(w, r)
+		return "", nil
+	}
 	if err != nil {
 		return "", err
 	}
