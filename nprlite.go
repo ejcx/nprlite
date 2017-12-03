@@ -17,7 +17,12 @@ import (
 )
 
 const (
-	styleTemplate = `body {
+	styleTemplate = `
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<style>
+  body {
 	max-width: 650px;
 	margin: 2em auto 4em;
 	padding: 0 1rem;
@@ -37,17 +42,14 @@ img {
 
 .category {
   padding: 0 5px 0 5px;
-}`
+}
+</style>`
+
 	pageTemplate = `<!DOCTYPE html>
 <html>
 <head>
 %s
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<style>
 %s
-</style>
 </head>
 <body>
 <div class="categories">%s</div>
@@ -62,6 +64,7 @@ img {
 <html>
 <head>
 NPR News
+%s
 </head>
 <body>
 <div>%s</div>
@@ -120,7 +123,7 @@ func story(w http.ResponseWriter, r *http.Request) {
 		err := errors.New("Couldn't fetch story")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	fmt.Fprintf(w, articleTemplate, article)
+	fmt.Fprintf(w, articleTemplate, styleTemplate, article)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
