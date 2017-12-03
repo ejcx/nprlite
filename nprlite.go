@@ -33,7 +33,7 @@ const (
 
 	contentTemplate  = `<li><a target="_blank" href="%s">%s</a></li>`
 	categoryTemplate = `%s<a class="category" href="%s">%s</a>`
-	titleTemplate    = `<title>%s</title>`
+	titleTemplate    = `<title>%s Lite</title>`
 	seperator        = "|"
 )
 
