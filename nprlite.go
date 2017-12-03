@@ -10,9 +10,6 @@ import (
 	"regexp"
 	"strings"
 
-	"golang.org/x/net/html"
-	"golang.org/x/net/html/atom"
-
 	"github.com/gorilla/mux"
 	"github.com/mmcdole/gofeed"
 	"google.golang.org/appengine"
@@ -114,59 +111,21 @@ func index(w http.ResponseWriter, r *http.Request) {
 }
 
 func parsearticle(body io.Reader) (string, error) {
-	var (
-		seenFirstBlock bool
-		article        string
-	)
-	z := html.NewTokenizer(body)
-	printNext := false
-	for {
-		tt := z.Next()
-		if tt == html.ErrorToken {
-			return article, nil
-		}
-		token := z.Token()
-		if token.DataAtom == atom.P {
-			printNext = true
-			continue
-		}
-		if printNext {
-			// If this is another paragraph tag, it's empty
-			// so skip that garbage.
-			if token.DataAtom == atom.P {
-				printNext = false
-				continue
-			}
-
-			// If it's a blockquote tag. Skip this whole thing.
-			if token.DataAtom == atom.Blockquote {
-				printNext = false
-				continue
-			}
-			if len(token.Attr) == 0 {
-				// Strip out all white space. If there's nothing
-				// left then skip it.
-				d := strings.TrimSpace(token.Data)
-				if len(d) == 0 {
-					printNext = false
-					continue
-				}
-
-				// skip the first block we find.
-				if !seenFirstBlock {
-					seenFirstBlock = true
-					continue
-				}
-				// At the end of the day. If this is less than 5 or fewer characters
-				// it is probably a mistake.
-				if len(d) < 6 {
-					continue
-				}
-				article += fmt.Sprintf(articleEntryTemplate, d)
-			}
-			printNext = false
-		}
+	buf, err := ioutil.ReadAll(body)
+	if err != nil {
+		return "", err
 	}
+	pieces := strings.Split(string(buf), "<p><a href=\"/\">Home</a></p>")
+	if len(pieces) != 2 {
+		return "", nil
+	}
+	articleFooter := pieces[1]
+	articlePieces := strings.Split(articleFooter, "<ul>")
+	if len(pieces) != 2 {
+		return "", nil
+	}
+	article := articlePieces[0]
+	return article, nil
 }
 
 func getarticle(w http.ResponseWriter, r *http.Request, id string) (string, error) {
