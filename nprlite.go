@@ -63,10 +63,11 @@ img {
 	articleTemplate = `<!DOCTYPE html>
 <html>
 <head>
-NPR News
+<title>NPR News</title>
 %s
 </head>
 <body>
+<div class="categories">%s</div>
 <div>%s</div>
 </body>
 </html>`
@@ -132,7 +133,7 @@ func story(w http.ResponseWriter, r *http.Request) {
 	if article == "" {
 		return
 	}
-	fmt.Fprintf(w, articleTemplate, styleTemplate, article)
+	fmt.Fprintf(w, articleTemplate, styleTemplate, categories, article)
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
