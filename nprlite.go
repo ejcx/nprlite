@@ -34,6 +34,7 @@ const (
 	contentTemplate  = `<li><a target="_blank" href="%s">%s</a></li>`
 	categoryTemplate = `%s<a class="category" href="%s">%s</a>`
 	titleTemplate    = `<title>%s</title>`
+	seperator        = "|"
 )
 
 var (
@@ -43,14 +44,14 @@ var (
 	fp              = gofeed.NewParser()
 
 	categoryUrls = map[string]Page{
-		"/":           Page{Num: "1001", Category: "News", Url: "/"},
-		"/politics":   Page{Num: "1014", Category: "Politics", Url: "/politics"},
-		"/national":   Page{Num: "1003", Category: "National", Url: "/national"},
-		"/education":  Page{Num: "1013", Category: "Education", Url: "/education"},
-		"/business":   Page{Num: "1006", Category: "Business", Url: "/business"},
-		"/technology": Page{Num: "1019", Category: "Technology", Url: "/technology"},
-		"/science":    Page{Num: "1007", Category: "Science", Url: "/science"},
-		"/health":     Page{Num: "1128", Category: "Health", Url: "/health"},
+		"1014": Page{Num: "1014", Category: "Politics", Url: "/politics"},
+		"1003": Page{Num: "1003", Category: "National", Url: "/national"},
+		"1013": Page{Num: "1013", Category: "Education", Url: "/education"},
+		"1006": Page{Num: "1006", Category: "Business", Url: "/business"},
+		"1019": Page{Num: "1019", Category: "Technology", Url: "/technology"},
+		"1007": Page{Num: "1007", Category: "Science", Url: "/science"},
+		"1128": Page{Num: "1128", Category: "Health", Url: "/health"},
+		"1001": Page{Num: "1001", Category: "Top Stories", Url: "/"},
 	}
 )
 
@@ -70,8 +71,12 @@ func fetcher(w http.ResponseWriter, r *http.Request, num, category string) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	page := categoryUrls[r.URL.Path]
-	fetcher(w, r, page.Num, page.Category)
+	for num, page := range categoryUrls {
+		if page.Url != r.URL.Path {
+			continue
+		}
+		fetcher(w, r, num, page.Category)
+	}
 }
 
 func getnews(w http.ResponseWriter, r *http.Request, id, category string) (string, error) {
@@ -102,17 +107,17 @@ func getnews(w http.ResponseWriter, r *http.Request, id, category string) (strin
 }
 
 func init() {
-	categoryCount := 0
-	for url, page := range categoryUrls {
-		seperator := "|"
-		if categoryCount == 0 {
-			seperator = ""
-		}
+	// Manually add the top stories to the front.
+	categories += fmt.Sprintf(categoryTemplate, "", "/", "Top Stories")
+	for _, page := range categoryUrls {
 		// Set up an http handler for this.
-		http.HandleFunc(url, index)
+		http.HandleFunc(page.Url, index)
 
+		// Skip adding top stories to the header.
+		if page.Url == "/" {
+			continue
+		}
 		// Set up the category list for the header.
-		categories += fmt.Sprintf(categoryTemplate, seperator, url, page.Category)
-		categoryCount++
+		categories += fmt.Sprintf(categoryTemplate, seperator, page.Url, page.Category)
 	}
 }
