@@ -202,7 +202,7 @@ func getnews(w http.ResponseWriter, r *http.Request, id, category string) (strin
 func init() {
 	// Manually add the top stories to the front.
 	r := mux.NewRouter()
-	categories += fmt.Sprintf(categoryTemplate, "", "/", "Top Stories")
+	categories += fmt.Sprintf(categoryTemplate, "", "/", "Headlines")
 	for _, page := range categoryUrls {
 		// Set up an http handler for this.
 		r.HandleFunc(page.Url, index)
