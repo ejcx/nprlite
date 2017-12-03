@@ -84,15 +84,15 @@ var (
 	categories      string
 	fp              = gofeed.NewParser()
 
-	categoryUrls = map[string]Page{
-		"1014": Page{Num: "1014", Category: "Politics", Url: "/politics"},
-		"1003": Page{Num: "1003", Category: "National", Url: "/national"},
-		"1013": Page{Num: "1013", Category: "Education", Url: "/education"},
-		"1006": Page{Num: "1006", Category: "Business", Url: "/business"},
-		"1019": Page{Num: "1019", Category: "Technology", Url: "/technology"},
-		"1007": Page{Num: "1007", Category: "Science", Url: "/science"},
-		"1128": Page{Num: "1128", Category: "Health", Url: "/health"},
-		"1001": Page{Num: "1001", Category: "Headlines", Url: "/"},
+	categoryUrls = []Page{
+		Page{Num: "1014", Category: "Politics", Url: "/politics"},
+		Page{Num: "1003", Category: "National", Url: "/national"},
+		Page{Num: "1013", Category: "Education", Url: "/education"},
+		Page{Num: "1006", Category: "Business", Url: "/business"},
+		Page{Num: "1019", Category: "Technology", Url: "/technology"},
+		Page{Num: "1007", Category: "Science", Url: "/science"},
+		Page{Num: "1128", Category: "Health", Url: "/health"},
+		Page{Num: "1001", Category: "Headlines", Url: "/"},
 	}
 )
 
@@ -127,11 +127,11 @@ func story(w http.ResponseWriter, r *http.Request) {
 }
 
 func index(w http.ResponseWriter, r *http.Request) {
-	for num, page := range categoryUrls {
+	for _, page := range categoryUrls {
 		if page.Url != r.URL.Path {
 			continue
 		}
-		fetcher(w, r, num, page.Category)
+		fetcher(w, r, page.Num, page.Category)
 	}
 }
 
