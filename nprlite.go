@@ -17,15 +17,7 @@ import (
 )
 
 const (
-	pageTemplate = `<!DOCTYPE html>
-<html>
-<head>
-%s
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta http-equiv="X-UA-Compatible" content="ie=edge">
-<style>
-body {
+	styleTemplate = `body {
 	max-width: 650px;
 	margin: 2em auto 4em;
 	padding: 0 1rem;
@@ -45,7 +37,16 @@ img {
 
 .category {
   padding: 0 5px 0 5px;
-}
+}`
+	pageTemplate = `<!DOCTYPE html>
+<html>
+<head>
+%s
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<style>
+%s
 </style>
 </head>
 <body>
