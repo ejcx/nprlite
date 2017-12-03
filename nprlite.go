@@ -21,14 +21,35 @@ const (
 <html>
 <head>
 %s
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
 <style>
+body {
+	max-width: 650px;
+	margin: 2em auto 4em;
+	padding: 0 1rem;
+	line-height: 1.5;
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	-webkit-font-smoothing: antialiased;
+}
+
+img {
+	max-width: 100%;
+	height: auto;
+}
+
+.categories {
+	word-break: break-word;
+}
+
 .category {
   padding: 0 5px 0 5px;
 }
 </style>
 </head>
 <body>
-<div>%s</div>
+<div class="categories">%s</div>
 <h3>%s</h3>
 <ul>
 %s
@@ -46,7 +67,7 @@ NPR News
 </body>
 </html>`
 
-	contentTemplate      = `<li><a target="_blank" href="%s">%s</a></li>`
+	contentTemplate      = `<li><a href="%s">%s</a></li>`
 	articleEntryTemplate = `<p>%s</p>`
 	categoryTemplate     = `%s<a class="category" href="%s">%s</a>`
 	titleTemplate        = `<title>%s Lite</title>`
@@ -173,7 +194,7 @@ func getnews(w http.ResponseWriter, r *http.Request, id, category string) (strin
 		contentItems += fmt.Sprintf(contentTemplate, url, item.Title)
 	}
 	title := fmt.Sprintf(titleTemplate, feed.Title)
-	currentPage := fmt.Sprintf(pageTemplate, title, categories, category, contentItems)
+	currentPage := fmt.Sprintf(pageTemplate, title, styleTemplate, categories, category, contentItems)
 	return currentPage, nil
 }
 
