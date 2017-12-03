@@ -89,7 +89,7 @@ var (
 		"1019": Page{Num: "1019", Category: "Technology", Url: "/technology"},
 		"1007": Page{Num: "1007", Category: "Science", Url: "/science"},
 		"1128": Page{Num: "1128", Category: "Health", Url: "/health"},
-		"1001": Page{Num: "1001", Category: "Top Stories", Url: "/"},
+		"1001": Page{Num: "1001", Category: "Headlines", Url: "/"},
 	}
 )
 
